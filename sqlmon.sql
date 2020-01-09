@@ -20,8 +20,9 @@
 --
 --------------------------------------------------------------------------------
 
-SET HEADING OFF LINESIZE 32767 PAGESIZE 0 TRIMSPOOL ON TRIMOUT ON LONG 9999999 VERIFY OFF LONGCHUNKSIZE 100000 FEEDBACK OFF
-SET TERMOUT OFF 
+SET LINESIZE 32767 PAGESIZE 0 TRIMSPOOL ON TRIMOUT ON LONG 9999999 VERIFY OFF LONGCHUNKSIZE 100000
+-- SET HEADING OFF LINESIZE 32767 PAGESIZE 0 TRIMSPOOL ON TRIMOUT ON LONG 9999999 VERIFY OFF LONGCHUNKSIZE 100000 FEEDBACK OFF
+-- SET TERMOUT OFF 
 SET TIMING OFF
 SET DEFINE ON
 
@@ -56,7 +57,7 @@ FROM   v$sql_monitor    m
        v$sql            s
        ON (    s.sql_id        = m.sql_id
            AND s.child_address = m.sql_child_address)
-WHERE  m.sid = &1
+WHERE  m.sid = 1999	-- &1
 AND    UPPER(m.sql_text) NOT LIKE 'EXPLAIN PLAN%'
 GROUP  BY
        m.sid
@@ -82,8 +83,8 @@ SPOOL OFF
 SET TERMOUT ON HEADING ON PAGESIZE 5000 LINESIZE 999 FEEDBACK ON 
 SET TIMING ON
 
---HOST open sqlmon_&_v_dbname._&_v_sql_id._&_v_sql_exec_start._&_v_sql_exec_id..html
-HOST open http://localhost:8000/sqlmon_&_v_dbname._&_v_sql_id._&_v_sql_exec_start._&_v_sql_exec_id..html
+HOST START sqlmon_&_v_dbname._&_v_sql_id._&_v_sql_exec_start._&_v_sql_exec_id..html
+-- HOST open http://localhost:8000/sqlmon_&_v_dbname._&_v_sql_id._&_v_sql_exec_start._&_v_sql_exec_id..html
 
 undefine _v_dbname
 undefine _v_sid
