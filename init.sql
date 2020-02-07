@@ -116,7 +116,7 @@ def _tpt_tempdir=&SQLPATH/tmp
 -- return control back to sqlplus immediately after launching
 -- notepad (so that you can continue typing in sqlplus
 
-  define _editor="vi -c 'set notitle'"  
+--  define _editor="vi -c 'set notitle'"  
 --  define _external_editor="/Applications/Terminator.app/Contents/MacOS/Terminator vi "  
 
 -- assign the tracefile name to trc variable
