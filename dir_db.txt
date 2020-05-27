@@ -1,0 +1,13 @@
+-- Description  : Displays information about all directories.
+-- Requirements : Access to the DBA views.
+
+SET LINESIZE 150
+
+COLUMN owner FORMAT A20
+COLUMN directory_name FORMAT A25
+COLUMN directory_path FORMAT A80
+
+SELECT *
+FROM   dba_directories
+-- WHERE directory_name = DATA_PUMP_DIR
+ORDER BY owner, directory_name;

@@ -2,7 +2,7 @@
 -- Licensed under the Apache License, Version 2.0. See LICENSE.txt for terms & conditions.
 
 --------------------------------------------------------------------------------
---
+-- 
 -- File name:   ashtop.sql v1.2
 -- Purpose:     Display top ASH time (count of ASH samples) grouped by your
 --              specified dimensions
@@ -17,7 +17,7 @@
 --     @ashtop username,sql_id session_type='FOREGROUND' sysdate-1/24 sysdate
 --
 -- Other:
---     This script uses only the in-memory V$ACTIVE_SESSION_HISTORY, use
+--     This script uses only the in-memory GV$ACTIVE_SESSION_HISTORY, use
 --     @dashtop.sql for accessiong the DBA_HIST_ACTIVE_SESS_HISTORY archive
 --              
 --------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ COL p3text              FOR A30 word_wrap
 COL p1hex               FOR A17
 COL p2hex               FOR A17
 COL p3hex               FOR A17
+COL dop                 FOR 99
 COL AAS                 FOR 9999.9
 COL totalseconds HEAD "Total|Seconds" FOR 99999999
 COL dist_sqlexec_seen HEAD "Distinct|Execs Seen" FOR 999999
@@ -45,8 +46,10 @@ COL sql_opname          FOR A20
 COL top_level_call_name FOR A30
 COL wait_class          FOR A15
 
-SELECT * FROM (
-    WITH bclass AS (SELECT class, ROWNUM r from v$waitstat)
+SELECT
+    * 
+FROM (
+    WITH bclass AS (SELECT /*+ INLINE */ class, ROWNUM r from v$waitstat)
     SELECT /*+ LEADING(a) USE_HASH(u) */
         COUNT(*)                                                     totalseconds
       , ROUND(COUNT(*) / ((CAST(&4 AS DATE) - CAST(&3 AS DATE)) * 86400), 1) AAS
@@ -64,11 +67,12 @@ SELECT * FROM (
            , TO_CHAR(CASE WHEN session_state = 'WAITING' THEN p1 ELSE null END, '0XXXXXXXXXXXXXXX') p1hex
            , TO_CHAR(CASE WHEN session_state = 'WAITING' THEN p2 ELSE null END, '0XXXXXXXXXXXXXXX') p2hex
            , TO_CHAR(CASE WHEN session_state = 'WAITING' THEN p3 ELSE null END, '0XXXXXXXXXXXXXXX') p3hex
+           , TRUNC(px_flags / 2097152) dop
            , NVL(event, session_state)||
                 CASE 
                     WHEN event like 'enq%' AND session_state = 'WAITING'
                     THEN ' [mode='||BITAND(p1, POWER(2,14)-1)||']'
-                    WHEN a.event IN ('buffer busy waits', 'gc buffer busy', 'gc buffer busy acquire', 'gc buffer busy release')
+                    WHEN a.event IN (SELECT name FROM v$event_name WHERE parameter3 = 'class#')
                     THEN ' ['||CASE WHEN a.p3 <= (SELECT MAX(r) FROM bclass) 
                                THEN (SELECT class FROM bclass WHERE r = a.p3)
                                ELSE (SELECT DECODE(MOD(BITAND(a.p3,TO_NUMBER('FFFF','XXXX')) - 17,2),0,'undo header',1,'undo data', 'error') FROM dual)

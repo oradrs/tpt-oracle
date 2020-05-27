@@ -3,7 +3,7 @@
 
 --------------------------------------------------------------------------------
 --
--- File name:   ash_wait_chains.sql (v0.5 BETA)
+-- File name:   ash_wait_chains.sql (v0.6 BETA)
 -- Purpose:     Display ASH wait chains (multi-session wait signature, a session
 --              waiting for another session etc.)
 --              
@@ -29,22 +29,24 @@ COL wait_chain FOR A300 WORD_WRAP
 COL "%This" FOR A6
 
 PROMPT
-PROMPT -- Display ASH Wait Chain Signatures script v0.5 BETA by Tanel Poder ( http://blog.tanelpoder.com )
+PROMPT -- Display ASH Wait Chain Signatures script v0.6 BETA by Tanel Poder ( http://blog.tanelpoder.com )
 
 WITH 
-bclass AS (SELECT class, ROWNUM r from v$waitstat),
-ash AS (SELECT /*+ QB_NAME(ash) LEADING(a) USE_HASH(u) SWAP_JOIN_INPUTS(u) */
+bclass AS (SELECT /*+ INLINE */ class, ROWNUM r from v$waitstat),
+ash AS (SELECT /*+ INLINE QB_NAME(ash) LEADING(a) USE_HASH(u) SWAP_JOIN_INPUTS(u) */
             a.*
           , o.*
           , u.username
-          , CASE WHEN a.session_type = 'BACKGROUND' OR REGEXP_LIKE(a.program, '.*\([PJ]\d+\)') THEN
+          , CASE WHEN a.session_type = 'BACKGROUND' AND a.program LIKE '%(DBW%)' THEN
+              '(DBWn)'
+            WHEN a.session_type = 'BACKGROUND' OR REGEXP_LIKE(a.program, '.*\([PJ]\d+\)') THEN
               REGEXP_REPLACE(SUBSTR(a.program,INSTR(a.program,'(')), '\d', 'n')
             ELSE
                 '('||REGEXP_REPLACE(REGEXP_REPLACE(a.program, '(.*)@(.*)(\(.*\))', '\1'), '\d', 'n')||')'
             END || ' ' program2
           , NVL(a.event||CASE WHEN event like 'enq%' AND session_state = 'WAITING'
                               THEN ' [mode='||BITAND(p1, POWER(2,14)-1)||']'
-                              WHEN a.event IN ('buffer busy waits', 'gc buffer busy', 'gc buffer busy acquire', 'gc buffer busy release') 
+                              WHEN a.event IN (SELECT name FROM v$event_name WHERE parameter3 = 'class#')
                               THEN ' ['||NVL((SELECT class FROM bclass WHERE r = a.p3),'undo @bclass '||a.p3)||']' ELSE null END,'ON CPU') 
                        || ' ' event2
           , TO_CHAR(CASE WHEN session_state = 'WAITING' THEN p1 ELSE null END, '0XXXXXXXXXXXXXXX') p1hex
@@ -86,10 +88,10 @@ ash AS (SELECT /*+ QB_NAME(ash) LEADING(a) USE_HASH(u) SWAP_JOIN_INPUTS(u) */
         AND a.current_obj# = o.object_id(+)
         AND sample_time BETWEEN &3 AND &4
     ),
-ash_samples AS (SELECT DISTINCT sample_id FROM ash),
-ash_data AS (SELECT * FROM ash),
+ash_samples AS (SELECT /*+ INLINE */ DISTINCT sample_id FROM ash),
+ash_data AS (SELECT /*+ INLINE */ * FROM ash),
 chains AS (
-    SELECT
+    SELECT /*+ INLINE */ 
         sample_time ts
       , level lvl
       , session_id sid
@@ -138,4 +140,3 @@ SELECT * FROM (
 WHERE
     ROWNUM <= 30
 /
-

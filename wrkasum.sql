@@ -1,13 +1,20 @@
 -- Copyright 2018 Tanel Poder. All rights reserved. More info at http://tanelpoder.com
 -- Licensed under the Apache License, Version 2.0. See LICENSE.txt for terms & conditions.
 
--- Purpose:     Show a summary of SQL workareas grouped by operation type (SORT, HASH, etc)
+-- Purpose:     Show a summary of ACTIVE SQL workareas grouped by operation type (SORT, HASH, etc)
 --              Show both PGA workarea usage and TEMP usage by workareas (workareas don't include
 --              other PGA/TEMP use like PL/SQL arrays and global temporary tables)
 --
 -- Usage:       @wrkasum 1=1 
 --              @wrkasum username='APPUSER'
 --              @wrkasum "program LIKE '%BatchRunner.exe%' AND machine='host123'"
+
+SELECT 
+    SUM(pga_alloc_mem)/1048576 total_alloc_mem
+  , SUM(pga_used_mem) /1048576 total_used_mem
+FROM
+    gv$process
+/
 
 PROMPT Top allocation reason by PGA memory usage
 

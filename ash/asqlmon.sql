@@ -3,7 +3,7 @@
 
 ------------------------------------------------------------------------------------------------------------------------
 --
--- File name:   asqlmon.sql (v1.1)
+-- File name:   asqlmon.sql (v1.2)
 --
 -- Purpose:     Report SQL-monitoring-style drill-down into where in an execution plan the execution time is spent
 --
@@ -17,7 +17,7 @@
 -- Usage:       @asqlmon <sqlid> <child#> <from_time> <to_time>
 --
 -- Notes:       This script runs on Oracle 11g+ and you should have the
---              Diagnostics and Tuning pack licenses for using it as it queries
+--              Diagnostics pack license for using it as it queries
 --              some separately licensed views.
 --
 ------------------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ COL asqlmon_id        HEAD "ID" FOR 9999
 COL asqlmon_parent_id HEAD "PID"  FOR 9999
 
 
-BREAK ON asqlmon_plan_hash_value SKIP 1 ON asqlmon_sql_id SKIP 1 ON asqlmon_sql_child SKIP 1 ON asqlmon_sample_time SKIP 1 DUP ON asqlmon_operation
+BREAK ON asqlmon_sql_id SKIP 1 ON asqlmon_sql_child SKIP 1 ON asqlmon_plan_hash_value SKIP 1 ON asqlmon_sample_time SKIP 1 DUP ON asqlmon_operation
 
 PROMPT
 PROMPT -- ASQLMon v1.1 - by Tanel Poder ( http://blog.tanelpoder.com ) - Display SQL execution plan line level activity breakdown from ASH
@@ -93,7 +93,7 @@ SELECT
   , sq.event
 --  , sq.avg_p3 
   , plan.object_alias || CASE WHEN plan.qblock_name IS NOT NULL THEN ' ['|| plan.qblock_name || ']' END obj_alias_qbc_name
-  , CASE WHEN plan.access_predicates IS NOT NULL THEN '[A:] '|| SUBSTR(plan.access_predicates,1,1994) END || CASE WHEN plan.filter_predicates IS NOT NULL THEN ' [F:] ' || SUBSTR(plan.filter_predicates,1,1994) END asqlmon_predicates
+--  , CASE WHEN plan.access_predicates IS NOT NULL THEN '[A:] '|| SUBSTR(plan.access_predicates,1,1994) END || CASE WHEN plan.filter_predicates IS NOT NULL THEN ' [F:] ' || SUBSTR(plan.filter_predicates,1,1994) END asqlmon_predicates
 --  , plan.projection
 FROM
     v$sql_plan plan
