@@ -54,4 +54,5 @@ AND	owner LIKE
 		ELSE
 			user
 		END ESCAPE '\'
+ORDER BY owner, table_name
 /
