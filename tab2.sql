@@ -1,10 +1,11 @@
 -- Copyright 2018 Tanel Poder. All rights reserved. More info at http://tanelpoder.com
 -- Licensed under the Apache License, Version 2.0. See LICENSE.txt for terms & conditions.
+-- $Id$
 
 column	tab_owner	heading OWNER		format a20
 column	tab_table_name	heading TABLE_NAME	format a30
 column	tab_type	heading TYPE		format a4
-column	tab_num_rows	heading NUM_ROWS	format 99999999999
+column	tab_num_rows	heading NUM_ROWS	format 99,999,999,999
 column	tab_blocks heading BLOCKS		format 999999999999
 column	tab_empty_blocks heading EMPTY		format 99999999
 column	tab_avg_space	heading AVGSPC		format 99999
