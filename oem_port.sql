@@ -1,7 +1,7 @@
 -- EM Express; OEM port
 -- run from system user
 -- $Id$
--- $Format:%ci$ ($Format:%h$)
+-- #ident  "@(#)PROJECTNAME:FILENAME:$Format:%D:%ci:%cN:%h$"
 
 select dbms_xdb.getHttpPort() from dual;
 select dbms_xdb_config.getHttpsPort() from dual;
