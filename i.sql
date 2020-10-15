@@ -10,7 +10,7 @@
 -- Copyright:   (c) http://blog.tanelpoder.com
 -- 
 -- Other:       Some settings client OS specific (search for title)
---
+-- $Id$
 --------------------------------------------------------------------------------
 
 def   mysid="NA"
@@ -89,3 +89,9 @@ def mycpid=&_i_cpid
 
 -- undef _i_spid _i_inst _i_host _i_user _i_conn _i_cpid
 
+
+-- Command line –FAST option in sqlplus.
+SET ARRAYSIZE 100;
+SET PAGESIZE 50000;
+SET ROWPREFETCH 2;
+SET STATEMENTCACHE 20;
