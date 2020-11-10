@@ -1,5 +1,9 @@
--- Get list of user in db
+-- Get list of users (schema) in db
 
-select username 
-from dba_users
-order by created desc;
+COL USERNAME FORMAT A30;
+
+SELECT ROW_NUMBER() OVER(ORDER BY CREATED DESC) NUM, 
+        USERNAME, 
+        ACCOUNT_STATUS
+FROM DBA_USERS
+ORDER BY CREATED DESC;

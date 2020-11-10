@@ -9,3 +9,5 @@
 
 -- you can put your own login scripts here
 
+-- shows number of CPUs in db server
+@cpu.sql
