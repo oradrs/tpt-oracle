@@ -35,8 +35,11 @@ ORDER BY sql_id, start_time;
 Prompt
 Prompt *** Below will help to know SQL was available in which AWR snap id.
 
-col sql_profile for a32
-select sql_id, snap_id, plan_hash_value, sql_profile, executions_total,
+col sql_profile for a32;
+col BEGIN_INTERVAL_TIME for a32;
+col BEGIN_INTERVAL_TIME for a32;
+
+select sql_id, a.snap_id, BEGIN_INTERVAL_TIME, END_INTERVAL_TIME, plan_hash_value, sql_profile, executions_total,
 trunc(decode(executions_total, 0, 0, rows_processed_total/executions_total)) rows_avg,
 trunc(decode(executions_total, 0, 0, fetches_total/executions_total)) fetches_avg,
 trunc(decode(executions_total, 0, 0, disk_reads_total/executions_total)) disk_reads_avg,
@@ -49,8 +52,9 @@ trunc(decode(executions_total, 0, 0, apwait_total/executions_total)) apwait_time
 trunc(decode(executions_total, 0, 0, ccwait_total/executions_total)) ccwait_time_avg,
 trunc(decode(executions_total, 0, 0, plsexec_time_total/executions_total)) plsexec_time_avg,
 trunc(decode(executions_total, 0, 0, javexec_time_total/executions_total)) javexec_time_avg
-from dba_hist_sqlstat
+from dba_hist_sqlstat a, dba_hist_snapshot b
 where sql_id = '&&sql_id'
+AND a.snap_id = b.snap_id
 order by sql_id, snap_id;
 
 undef sql_id;
