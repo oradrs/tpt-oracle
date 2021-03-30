@@ -10,4 +10,11 @@
 -- you can put your own login scripts here
 
 -- shows number of CPUs in db server
-@cpu.sql
+-- @cpu.sql
+
+-- for xplan A-Rows
+SET echo on;
+alter session set statistics_level = ALL;
+SET echo off;
+
+SET timing on;

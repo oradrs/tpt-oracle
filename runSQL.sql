@@ -10,6 +10,9 @@ Spool runSQL.log APPEND;
 
 PROMPT ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~;
 
+define _I_CONN;
+define _I_USER;
+
 @date
 
 Set echo on;
@@ -32,7 +35,7 @@ set feedback ON SQL_ID;
 @qry.sql;
 -- ------------------------------------------
 
-set feedback OFF SQL_ID;
+set feedback on;
 Set echo off;
 
 @x       -- from tpt-oracle repos
