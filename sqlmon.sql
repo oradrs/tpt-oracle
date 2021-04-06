@@ -57,7 +57,7 @@ FROM   v$sql_monitor    m
        v$sql            s
        ON (    s.sql_id        = m.sql_id
            AND s.child_address = m.sql_child_address)
-WHERE  m.sid = 1999	-- &1
+WHERE  m.sid = &1
 AND    UPPER(m.sql_text) NOT LIKE 'EXPLAIN PLAN%'
 GROUP  BY
        m.sid
