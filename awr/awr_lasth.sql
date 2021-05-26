@@ -16,7 +16,10 @@ END;
 SET TERMOUT OFF PAGESIZE 0
 SELECT * FROM TABLE(DBMS_WORKLOAD_REPOSITORY.AWR_REPORT_HTML(:dbid, :inst_num, :bid, :eid))
 .
-SPOOL /tmp/awr_tmp.html
+SPOOL &_tpt_tempdir/awr_tmp..html
 /
 SPOOL OFF
+prompt Output file: &_tpt_tempdir/awr_tmp..html
+host &_start &_tpt_tempdir/awr_tmp..html
+
 SET TERMOUT ON PAGESIZE 5000
