@@ -2,10 +2,11 @@
 -- Purpose : Changing columns' length semantics from BYTE to CHAR (More detail on NLS_LENGTH_SEMANTICS )
 -- Target db : ORACLE
 -- replace [SCHEMA] with list of schemas 
--- Revision : $Id: change_charLen_semantics_ORA.sql 18034 2013-05-27 06:18:06Z $
+-- preferably should run from SYS user
+-- Revision : $Id: nls_change_charLen_semantics_ORA.sql 18034 2013-05-27 06:18:06Z $
 -- -------------------------------------------------------------------------
 
-spool change_charLen_semantics_ORA.log append;
+spool nls_change_charLen_semantics_ORA.log append;
 
 SELECT CURRENT_timestamp START_DTTM FROM dual;
 
