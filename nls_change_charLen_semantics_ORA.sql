@@ -8,6 +8,23 @@
 
 spool nls_change_charLen_semantics_ORA.log append;
 
+DEFINE _I_CONN;
+
+-- semantic check
+select CASE WHEN count(*) > 0 
+            THEN '[ ALERT ] : For ' || count(*) || ' columns,  CHAR semantic is NOT used. Run nls_change_charLen_semantics_ORA.sql script manually from SYS user ?' 
+            ELSE '[ INFO ] : CHAR semantic used for CHAR / VARCHAR columns.'
+        END chk_semantic
+FROM all_tab_columns c
+WHERE c.owner IN ('&SCHEMA')
+    AND   c.DATA_TYPE IN ('VARCHAR2','CHAR')
+    AND C.CHAR_USED = 'B'
+    AND NOT REGEXP_LIKE (c.table_name, '^BIN\$.*')
+    AND EXISTS (SELECT NULL FROM all_tables t WHERE t.table_name = c.table_name AND t.owner = c.owner)
+/
+
+pause;
+
 SELECT CURRENT_timestamp START_DTTM FROM dual;
 
 -- ------------------------------------------
@@ -30,7 +47,7 @@ BEGIN
  	for st_row in (
                     SELECT 'ALTER TABLE ' || c.OWNER || '.' || c.TABLE_NAME || ' MODIFY ' || c.COLUMN_NAME || ' ' || c.DATA_TYPE || '(' || c.CHAR_LENGTH || ' CHAR)' alter_ddl
                     FROM all_tab_columns c
-                    WHERE c.owner IN ('[SCHEMA]')
+                    WHERE c.owner IN ('&SCHEMA')
                         AND   c.DATA_TYPE IN ('VARCHAR2','CHAR')
                         AND C.CHAR_USED = 'B'
                         AND NOT REGEXP_LIKE (c.table_name, '^BIN\$.*')
