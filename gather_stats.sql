@@ -11,6 +11,7 @@ Prompt INFO : START - Gather table statistics
 DECLARE
 	v_stats VARCHAR2(1000);
     v_sample_size_pct varchar2(100) := 100;
+    v_degree varchar2(100) := 4;
 BEGIN
 
     $IF DBMS_DB_VERSION.VER_LE_10_2 $THEN
@@ -23,8 +24,9 @@ BEGIN
     -- dbms_output.put_line('Oracle 12c ...');
         v_sample_size_pct := 'DBMS_STATS.AUTO_SAMPLE_SIZE';
     $ELSIF DBMS_DB_VERSION.VER_LE_19 $THEN
-    -- dbms_output.put_line('Oracle 19c ...');
+     -- dbms_output.put_line('Oracle 19c ...');
         v_sample_size_pct := 'DBMS_STATS.AUTO_SAMPLE_SIZE';
+        v_degree := 'DBMS_STATS.AUTO_DEGREE';
     $ELSE
         v_sample_size_pct := '100';
     $END
@@ -40,7 +42,7 @@ BEGIN
 				'tabname=>'||''''||st_row.table_name||''''||','||
 				'estimate_percent=>'|| v_sample_size_pct ||','||
 				'method_opt=>'||''''||'FOR ALL COLUMNS SIZE AUTO'||''''||','||
-				'degree=> 4'||','||
+				'degree=>'|| v_degree ||','||
 				'cascade=>true);
 			    end;'; 
 		-- dbms_output.put_line('ownname=>'||''''||st_row.owner||''''||','||'tabname=>'||''''||st_row.table_name);
