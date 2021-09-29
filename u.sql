@@ -32,7 +32,7 @@ from
     v$process p
 where
     s.paddr=p.addr
---and s.type!='BACKGROUND'
+and s.type!='BACKGROUND'
 --and s.status='ACTIVE'
 /
 

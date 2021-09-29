@@ -1,7 +1,14 @@
--- Gather stats for single table
+-- Purpose : Gather stats for single table
 -- inputs (schema & table name ) will be asked
 -- Usage : @gather_stats_oneTab.sql
+-- Verified : in 19c
 -- ------------------------------------------
+
+set serveroutput on size unlimited;
+set timing on;
+
+Prompt 
+Prompt INFO : START - Gather table statistics
 
 BEGIN
     dbms_stats.gather_table_stats(ownname => UPPER('&SCHEMA'), 
@@ -12,3 +19,8 @@ BEGIN
                                     CASCADE => TRUE);
 END;
 /
+
+Prompt INFO : END - Gather table statistics
+Prompt
+
+set serveroutput off;
