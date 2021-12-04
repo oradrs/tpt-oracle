@@ -16,9 +16,12 @@ define _I_USER;
 @date
 
 Set echo on;
-SET serverout OFF;  -- if ON then will not get execution plan
+
+-- if ON then will not get execution plan
+SET serveroutput OFF;
 
 alter session set statistics_level = all;
+
 alter session set optimizer_capture_sql_plan_baselines = false;
 alter session set optimizer_use_sql_plan_baselines = false;
 
@@ -43,3 +46,7 @@ Set echo off;
 @x       -- from tpt-oracle repos
 
 Spool off;
+
+Prompt 
+Prompt Generate ACTIVE (SQL monitor) report using    @xpia.sql <sql_id>
+Prompt 

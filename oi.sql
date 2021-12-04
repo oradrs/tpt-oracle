@@ -17,7 +17,7 @@ from
     dba_objects 
 where 
     status != 'VALID'
-order by 
+order by created,
     o_object_name,
     o_owner,
     o_object_type
