@@ -16,7 +16,7 @@ from
     dba_objects 
 where 
     object_type in ('PACKAGE', 'PACKAGE BODY', 'PROCEDURE', 'FUNCTION', 'TRIGGER')
--- AND object_name IN ( SELECT NAME FROM all_errors )  -- uncomment to complie only INVALID obj
+AND object_name IN ( SELECT NAME FROM all_errors )  -- uncomment to complie only INVALID obj
 AND status != 'VALID';
 
 ;
