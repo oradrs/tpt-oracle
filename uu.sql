@@ -19,6 +19,7 @@ select s.username u_username, ' ''' || s.sid || ',' || s.serial# || '''' u_sid,
        s.last_call_et lastcall, 
        s.status 
        --, s.logon_time
+       , (current_date - s.logon_time) * 24 logon_age_hours
 from 
     v$session s,
     v$process p
