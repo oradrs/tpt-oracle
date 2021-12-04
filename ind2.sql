@@ -72,11 +72,12 @@ column ind_temp heading TEMP format a4
 column ind_blevel heading H format 9
 column ind_leaf_blocks heading LFBLKS format 999999999
 column ind_distinct_keys heading NDK format 999999999999
+column rn heading RN format 99
 
 break on ind_owner on table_name
 
 select 
-    owner ind_owner, 
+    owner ind_owner, row_number() over(ORDER BY 1) rn,
     table_name ind_table_name1, 
     index_name ind_index_name1, 
     REPLACE(index_type,'FUNCTION-BASED', 'FBI') ind_index_type, 
