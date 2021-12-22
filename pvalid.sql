@@ -7,6 +7,7 @@
 -- Purpose:     Show valid parameter values from V$PARAMETER_VALID_VALUES
 --              underlying X$ table X$KSPVLD_VALUES
 --
+-- article : https://tanelpoder.com/2008/08/13/script-display-valid-values-for-multioption-parameters-including-hidden-parameters/
 -- Author:      Tanel Poder
 -- Copyright:   (c) http://www.tanelpoder.com
 --              

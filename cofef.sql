@@ -5,6 +5,9 @@
 -- By Tanel Poder ( http://www.tanelpoder.com )
 --   Requires opt_param_matrix table to be created (using tools/optimizer/optimizer_features_matrix.sql)
 --   Requires Oracle 11g due PIVOT clause (but you can rewrite this SQL in earlier versions)`
+-- 
+-- Article : https://tanelpoder.com/posts/scripts-for-drilling-down-into-unknown-optimizer-changes/
+--
 
 COL sql_feature FOR a40
 
