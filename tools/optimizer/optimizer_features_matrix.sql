@@ -1,6 +1,8 @@
 -- Copyright 2018 Tanel Poder. All rights reserved. More info at http://tanelpoder.com
 -- Licensed under the Apache License, Version 2.0. See LICENSE.txt for terms & conditions.
 
+-- run from SYS user
+
 PROMPT display a matrix of optimizer parameters which change when changing optimizer_features_enabled...
 
 CREATE TABLE opt_param_matrix(

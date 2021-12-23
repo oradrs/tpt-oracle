@@ -4,12 +4,14 @@
 --          Sometimes SQL do not perform in current version of Oracle but perform better in older releases of Oracle.
 --          try generated SQL using generated cmd / hint
 --
--- Steps:
+-- execute : @optmzr.sql
+--
+-- Steps once executed this script:
 --      set echo on; spool run.log append;
 --      run ALTER SESSION SET optimizer_features_enable cmd
 --          or add as sql_hint in SQL
 --      set timing on; and any other session level sql to run
---      identified SQL
+--      run identified SQL
 --      generate xplan using @xall
 --      spool off
 --
