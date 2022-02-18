@@ -1,13 +1,19 @@
 -- Copyright 2018 Tanel Poder. All rights reserved. More info at http://tanelpoder.com
 -- Licensed under the Apache License, Version 2.0. See LICENSE.txt for terms & conditions.
 
+-- sample :
+--    @awr\gen_awr_report.sql "timestamp'2021-12-27 00:00:00'" "timestamp'2021-12-28 00:00:00'"
+--    @awr\gen_awr_report.sql sysdate-1 sysdate
+
 VAR dbid NUMBER
 
 PROMPT Listing latest AWR snapshots ...
-SELECT snap_id, end_interval_time 
+SELECT snap_id, begin_interval_time, end_interval_time 
 FROM dba_hist_snapshot 
 --WHERE begin_interval_time > TO_DATE('2011-06-07 07:00:00', 'YYYY-MM-DD HH24:MI:SS') 
-WHERE end_interval_time > SYSDATE - 1
+-- WHERE end_interval_time > SYSDATE - 1
+WHERE begin_interval_time >= &1
+AND end_interval_time <= &2
 ORDER BY end_interval_time;
 
 ACCEPT bid NUMBER PROMPT "Enter begin snapshot id: "

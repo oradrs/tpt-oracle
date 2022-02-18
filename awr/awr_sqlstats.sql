@@ -1,6 +1,9 @@
 -- Copyright 2018 Tanel Poder. All rights reserved. More info at http://tanelpoder.com
 -- Licensed under the Apache License, Version 2.0. See LICENSE.txt for terms & conditions.
 
+-- sample
+--    @awr/awr_sqlstats.sql 0gn88kazfj2d4 % "timestamp'2021-12-27 00:00:00'" "timestamp'2021-12-30 00:00:00'"
+
 SET TERMOUT OFF pagesize 5000 tab off verify off linesize 999 trimspool on trimout on null ""
 SET TERMOUT ON
 
@@ -18,7 +21,8 @@ COL ccw_ms_per_sec  FOR 99999990
 
 
 SELECT
-    CAST(begin_interval_time AS DATE) begin_interval_time
+    sn.snap_id
+  , CAST(begin_interval_time AS DATE) begin_interval_time
   , sql_id
   , plan_hash_value
   , ROUND(SUM(executions_delta    )        / ((CAST(end_interval_time AS DATE) - CAST(begin_interval_time AS DATE)) * 86400), 1) exec_per_sec
@@ -43,7 +47,8 @@ AND plan_hash_value LIKE '&2'
 AND begin_interval_time >= &3
 AND end_interval_time   <= &4
 GROUP BY
-    CAST(begin_interval_time AS DATE)
+    sn.snap_id
+  , CAST(begin_interval_time AS DATE)
   , CAST(end_interval_time AS DATE)
   , sql_id
   , plan_hash_value
