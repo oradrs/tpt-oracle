@@ -1,0 +1,10 @@
+-- to run set of scripts when slowness reported for a SQL
+
+@sqlid_find.sql textWord
+
+-- replace sql_id
+@awr\awr_sqlstats 50nw012nm7mwb % sysdate-365 sysdate
+@xpia 50nw012nm7mwb
+
+START sqlhc\sqlhc.sql T 50nw012nm7mwb
+START sqlhc\sqlhc_sta.sql T 50nw012nm7mwb

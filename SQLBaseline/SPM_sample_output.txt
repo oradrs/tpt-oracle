@@ -1,0 +1,977 @@
+SQL> 
+SQL> --Setting optimizer_capture_sql_plan_baselines=TRUE
+SQL> --Automatically Captures the Plan for any
+SQL> --Repeatable SQL statement.
+SQL> --By Default optimizer_capture_sql_plan_baselines is False.
+SQL> --A repeatable sql  means which is executed more then once.
+SQL> --Now we will Capture various Optimizer plans in SPM Baseline.
+SQL> --Plans are captured into the Baselines as New Plans are found.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter session set optimizer_capture_sql_plan_baselines = TRUE;
+
+Session altered.
+
+SQL> alter session set optimizer_use_sql_plan_baselines=FALSE;
+
+Session altered.
+
+SQL> alter system set optimizer_features_enable='11.1.0.6';
+
+System altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Execute Sql.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 3803407550                                                                                                                 
+                                                                                                                                            
+----------------------------------------------------------------------------------------------                                              
+| Id  | Operation            | Name  | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |                                              
+----------------------------------------------------------------------------------------------                                              
+|   0 | SELECT STATEMENT     |       |     1 |    29 |   328   (7)| 00:00:04 |       |       |                                              
+|   1 |  SORT ORDER BY       |       |     1 |    29 |   328   (7)| 00:00:04 |       |       |                                              
+|   2 |   PARTITION RANGE ALL|       |     1 |    29 |   327   (6)| 00:00:04 |     1 |    28 |                                              
+|*  3 |    TABLE ACCESS FULL | SALES |     1 |    29 |   327   (6)| 00:00:04 |     1 |    28 |                                              
+----------------------------------------------------------------------------------------------                                              
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          0  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       1718  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --This was the first execution of the Sql.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 3803407550                                                                                                                 
+                                                                                                                                            
+----------------------------------------------------------------------------------------------                                              
+| Id  | Operation            | Name  | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |                                              
+----------------------------------------------------------------------------------------------                                              
+|   0 | SELECT STATEMENT     |       |     1 |    29 |   328   (7)| 00:00:04 |       |       |                                              
+|   1 |  SORT ORDER BY       |       |     1 |    29 |   328   (7)| 00:00:04 |       |       |                                              
+|   2 |   PARTITION RANGE ALL|       |     1 |    29 |   327   (6)| 00:00:04 |     1 |    28 |                                              
+|*  3 |    TABLE ACCESS FULL | SALES |     1 |    29 |   327   (6)| 00:00:04 |     1 |    28 |                                              
+----------------------------------------------------------------------------------------------                                              
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          0  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       1718  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --This was the second execution of the Sql.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> 
+SQL> --Verify what Plans have been inserted into Plan Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> select sql_handle, plan_name,
+  2  origin, enabled, accepted,sql_text
+  3  from dba_sql_plan_baselines
+  4  where sql_text like 'SELECT%sh.sales%';
+
+SQL_HANDLE               PLAN_NAME                     ORIGIN         ENA ACC                                                               
+------------------------ ----------------------------- -------------- --- ---                                                               
+SQL_TEXT                                                                                                                                    
+--------------------------------------------------------------------------------                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d211df68d0 AUTO-CAPTURE   YES YES                                                               
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d254bc8843 AUTO-CAPTURE   YES NO                                                                
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> -- SYS_SQL_PLAN_0f3e54d254bc8843 is the Very First Plan that
+SQL> --Is inserted in the Sql Plan Baseline.
+SQL> --Note the Very First Plan is ENABLED=YES AND ACCEPTED=YES
+SQL> --Note the ORIGIN is AUTO-CAPTURE WHICH MEANS The plan was captured
+SQL> --Automatically when optimizer_capture_sql_plan_baselines = TRUE.
+SQL> --Note The Plan hash value: 3803407550
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us change the Optimizer Envoriment.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_features_enable='10.2.0.3';
+
+System altered.
+
+SQL> alter session set optimizer_index_cost_adj=1;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 899219946                                                                                                                  
+                                                                                                                                            
+-----------------------------------------------------------------------------------------------------------------------                     
+| Id  | Operation                           | Name            | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+|   0 | SELECT STATEMENT                    |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   1 |  SORT ORDER BY                      |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   2 |   PARTITION RANGE ALL               |                 |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|*  3 |    TABLE ACCESS BY LOCAL INDEX ROWID| SALES           |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|   4 |     BITMAP CONVERSION TO ROWIDS     |                 |       |       |            |          |       |       |                     
+|   5 |      BITMAP INDEX FULL SCAN         | SALES_PROMO_BIX |       |       |            |          |     1 |    28 |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          1  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       2030  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note the plan hash value
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us verify if the plan was inserted into Plan Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> select sql_handle, plan_name,
+  2  origin, enabled, accepted,sql_text
+  3  from dba_sql_plan_baselines
+  4  where sql_text like 'SELECT%sh.sales%';
+
+SQL_HANDLE               PLAN_NAME                     ORIGIN         ENA ACC                                                               
+------------------------ ----------------------------- -------------- --- ---                                                               
+SQL_TEXT                                                                                                                                    
+--------------------------------------------------------------------------------                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d211df68d0 AUTO-CAPTURE   YES YES                                                               
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d254bc8843 AUTO-CAPTURE   YES NO                                                                
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> ---A New Plan SYS_SQL_PLAN_0f3e54d211df68d0 was found
+SQL> ---And inserted in the Plan Baseline.
+SQL> ---Note the ACCEPTED IS NO,as This is second plan added to the base line.
+SQL> ---Note The Plan hash value: 899219946
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us Change the Optimizer Envoriment.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_features_enable='9.2.0';
+
+System altered.
+
+SQL> alter session set optimizer_index_cost_adj=50;
+
+Session altered.
+
+SQL> alter session set optimizer_index_caching=100;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 3803407550                                                                                                                 
+                                                                                                                                            
+------------------------------------------------------------------------------                                                              
+| Id  | Operation            | Name  | Rows  | Bytes | Cost  | Pstart| Pstop |                                                              
+------------------------------------------------------------------------------                                                              
+|   0 | SELECT STATEMENT     |       |     1 |    29 |    47 |       |       |                                                              
+|   1 |  SORT ORDER BY       |       |     1 |    29 |    47 |       |       |                                                              
+|   2 |   PARTITION RANGE ALL|       |     1 |    29 |    45 |     1 |    28 |                                                              
+|*  3 |    TABLE ACCESS FULL | SALES |     1 |    29 |    45 |     1 |    28 |                                                              
+------------------------------------------------------------------------------                                                              
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+                                                                                                                                            
+Note                                                                                                                                        
+-----                                                                                                                                       
+   - cpu costing is off (consider enabling it)                                                                                              
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          1  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       1718  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note the plan hash value.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> ----Let us verify if the plan was inserted into Plan Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> select sql_handle,plan_name,
+  2  origin, enabled, accepted,sql_text
+  3  from dba_sql_plan_baselines
+  4  where sql_text like 'SELECT%sh.sales%';
+
+SQL_HANDLE               PLAN_NAME                     ORIGIN         ENA ACC                                                               
+------------------------ ----------------------------- -------------- --- ---                                                               
+SQL_TEXT                                                                                                                                    
+--------------------------------------------------------------------------------                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d211df68d0 AUTO-CAPTURE   YES YES                                                               
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d254bc8843 AUTO-CAPTURE   YES NO                                                                
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note No Plan was added above because The plan found was not New,
+SQL> --It was the same plan as found the First Time
+SQL> --Note the Plan hash value: 3803407550
+SQL> 
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us Change the Optimizer Envoriment.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_features_enable='9.2.0';
+
+System altered.
+
+SQL> alter session set optimizer_mode = first_rows;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 899219946                                                                                                                  
+                                                                                                                                            
+-------------------------------------------------------------------------------------------------------                                     
+| Id  | Operation                           | Name            | Rows  | Bytes | Cost  | Pstart| Pstop |                                     
+-------------------------------------------------------------------------------------------------------                                     
+|   0 | SELECT STATEMENT                    |                 |     1 |    29 |  2211 |       |       |                                     
+|   1 |  SORT ORDER BY                      |                 |     1 |    29 |  2211 |       |       |                                     
+|   2 |   PARTITION RANGE ALL               |                 |     1 |    29 |  2209 |     1 |    28 |                                     
+|*  3 |    TABLE ACCESS BY LOCAL INDEX ROWID| SALES           |     1 |    29 |  2209 |     1 |    28 |                                     
+|   4 |     BITMAP CONVERSION TO ROWIDS     |                 |       |       |       |       |       |                                     
+|   5 |      BITMAP INDEX FULL SCAN         | SALES_PROMO_BIX |       |       |       |     1 |    28 |                                     
+-------------------------------------------------------------------------------------------------------                                     
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+                                                                                                                                            
+Note                                                                                                                                        
+-----                                                                                                                                       
+   - cpu costing is off (consider enabling it)                                                                                              
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          1  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       2030  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note the plan hash value
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us verify if the plan was inserted into Plan Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> select sql_handle, plan_name,
+  2  origin, enabled, accepted,sql_text
+  3  from dba_sql_plan_baselines
+  4  where sql_text like 'SELECT%sh.sales%';
+
+SQL_HANDLE               PLAN_NAME                     ORIGIN         ENA ACC                                                               
+------------------------ ----------------------------- -------------- --- ---                                                               
+SQL_TEXT                                                                                                                                    
+--------------------------------------------------------------------------------                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d211df68d0 AUTO-CAPTURE   YES YES                                                               
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d254bc8843 AUTO-CAPTURE   YES NO                                                                
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> ---Note No plan was added above because The Plan found was not New.
+SQL> ---Note the Plan hash value: 899219946
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --So the SPM Baseline is now populated with 2 different plans.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us now  Turn the auto Capture off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter session set optimizer_capture_sql_plan_baselines = FALSE;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Optimizer_capture_sql_plan_baselines needs to be set
+SQL> --To TRUE only for Capture purpose.
+SQL> --Optimizer_capture_sql_plan_baselines =TRUE is not
+SQL> --Needed for USING AN existing SPM Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Now lets us see how the SPM uses the Plan.
+SQL> --The Parameter optimizer_use_sql_plan_baselines
+SQL> --Must be true for plans from SPM to be used.
+SQL> --By Default optimizer_use_sql_plan_baselines
+SQL> --Is set to TRUE only.
+SQL> --If optimizer_use_sql_plan_baselines is set
+SQL> --To FALSE than Plans will not be used
+SQL> --From existing SPM Baseline,
+SQL> --Even if they are populated.
+SQL> --Note The Plan must be ENABLED=YES AND ACCEPTED=YES
+SQL> --To be used by SPM.
+SQL> --The Very First Plan for a particular sql that gets
+SQL> --Loaded into an SPM Baseline Is ENABLED=YES
+SQL> --AND ACCEPTED=YES.
+SQL> --After that any Plan that gets loaded into the
+SQL> --SPM Baseline is ENABLED=YES AND ACCEPTED=NO.
+SQL> --These Plans needs to be ACCEPTED=YES before
+SQL> --They can be used,
+SQL> --The plans can be made ACCEPTED=YES by using the
+SQL> --Plan verification Step.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_use_sql_plan_baselines =TRUE;
+
+System altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us change the optimizer envoriment.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_features_enable='10.2.0.3';
+
+System altered.
+
+SQL> alter session set optimizer_index_cost_adj=1;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Execute the Sql in this new envoriment.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 899219946                                                                                                                  
+                                                                                                                                            
+-----------------------------------------------------------------------------------------------------------------------                     
+| Id  | Operation                           | Name            | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+|   0 | SELECT STATEMENT                    |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   1 |  SORT ORDER BY                      |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   2 |   PARTITION RANGE ALL               |                 |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|*  3 |    TABLE ACCESS BY LOCAL INDEX ROWID| SALES           |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|   4 |     BITMAP CONVERSION TO ROWIDS     |                 |       |       |            |          |       |       |                     
+|   5 |      BITMAP INDEX FULL SCAN         | SALES_PROMO_BIX |       |       |            |          |     1 |    28 |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+                                                                                                                                            
+Note                                                                                                                                        
+-----                                                                                                                                       
+   - SQL plan baseline "SYS_SQL_PLAN_0f3e54d211df68d0" used for this statement                                                              
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          1  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       2030  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Even though we have set
+SQL> --alter system set optimizer_features_enable='10.2.0.3';
+SQL> --alter session set optimizer_index_cost_adj=1
+SQL> --We are still using the Plan with a Plan hash value: 3803407550
+SQL> --This is because SQL PLAN baseline was used.
+SQL> --Note the Line
+SQL> --SQL plan baseline "SYS_SQL_PLAN_0f3e54d254bc8843" used for this statement
+SQL> --This indicates SQL plan baseline was used.
+SQL> --Note that SYS_SQL_PLAN_0f3e54d254bc8843 was used because it was enabled
+SQL> --And accepted=YES as it was the very first Plan.
+SQL> 
+SQL> Pause
+
+SQL> 
+SQL> --Lets us disbale Plan SYS_SQL_PLAN_0f3e54d254bc8843
+SQL> --We will use dbms_spm.alter_sql_plan_baseline
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> var pbsts varchar2(30);
+SQL> exec :pbsts := dbms_spm.alter_sql_plan_baseline('SYS_SQL_7de69bb90f3e54d2','SYS_SQL_PLAN_0f3e54d254bc8843','accepted','NO');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Verify the Plan Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> select sql_handle, plan_name,
+  2  origin, enabled, accepted, fixed, sql_text
+  3  from dba_sql_plan_baselines
+  4  where sql_text like 'SELECT%sh.sales%';
+
+SQL_HANDLE               PLAN_NAME                     ORIGIN         ENA ACC FIX                                                           
+------------------------ ----------------------------- -------------- --- --- ---                                                           
+SQL_TEXT                                                                                                                                    
+--------------------------------------------------------------------------------                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d211df68d0 AUTO-CAPTURE   YES YES NO                                                            
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d254bc8843 AUTO-CAPTURE   YES NO  NO                                                            
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note that SQL WITH SQL HANDLE SYS_SQL_7de69bb90f3e54d2 AND
+SQL> --Plan Name SYS_SQL_PLAN_0f3e54d254bc8843 is accepted=NO
+SQL> --So This plan should not be used Now.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_features_enable='10.2.0.3';
+
+System altered.
+
+SQL> alter session set optimizer_index_cost_adj=1;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 899219946                                                                                                                  
+                                                                                                                                            
+-----------------------------------------------------------------------------------------------------------------------                     
+| Id  | Operation                           | Name            | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+|   0 | SELECT STATEMENT                    |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   1 |  SORT ORDER BY                      |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   2 |   PARTITION RANGE ALL               |                 |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|*  3 |    TABLE ACCESS BY LOCAL INDEX ROWID| SALES           |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|   4 |     BITMAP CONVERSION TO ROWIDS     |                 |       |       |            |          |       |       |                     
+|   5 |      BITMAP INDEX FULL SCAN         | SALES_PROMO_BIX |       |       |            |          |     1 |    28 |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+                                                                                                                                            
+Note                                                                                                                                        
+-----                                                                                                                                       
+   - SQL plan baseline "SYS_SQL_PLAN_0f3e54d211df68d0" used for this statement                                                              
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+          1  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       2030  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+          1  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --You can see That NO Plans from SPM Baseline was used.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Now let us enable the use of SPM for sql handle SYS_SQL_7de69bb90f3e54d2
+SQL> --And Plan Name SYS_SQL_PLAN_0f3e54d211df68d0
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> var pbsts varchar2(30);
+SQL> exec :pbsts := dbms_spm.alter_sql_plan_baseline('SYS_SQL_7de69bb90f3e54d2','SYS_SQL_PLAN_0f3e54d211df68d0','accepted','YES');
+
+PL/SQL procedure successfully completed.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Verify the Plan Baseline.
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> select sql_handle, plan_name,
+  2  origin, enabled, accepted,sql_text
+  3  from dba_sql_plan_baselines
+  4  where sql_text like 'SELECT%sh.sales%';
+
+SQL_HANDLE               PLAN_NAME                     ORIGIN         ENA ACC                                                               
+------------------------ ----------------------------- -------------- --- ---                                                               
+SQL_TEXT                                                                                                                                    
+--------------------------------------------------------------------------------                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d211df68d0 AUTO-CAPTURE   YES YES                                                               
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+SYS_SQL_7de69bb90f3e54d2 SYS_SQL_PLAN_0f3e54d254bc8843 AUTO-CAPTURE   YES NO                                                                
+SELECT *                                                                                                                                    
+from sh.sales                                                                                                                               
+where quantity_sold > 30                                                                                                                    
+order by prod_id                                                                                                                            
+                                                                                                                                            
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note that SQL with SQL HANDLE SYS_SQL_7de69bb90f3e54d2 AND
+SQL> --Plan Name SYS_SQL_PLAN_0f3e54d211df68d0 is accepted=YES
+SQL> --and ENABLED=YES
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Let us Change the Optimizer Envoriment
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> alter system set optimizer_features_enable='11.1.0.6';
+
+System altered.
+
+SQL> alter session set optimizer_index_cost_adj=100;
+
+Session altered.
+
+SQL> alter session set optimizer_index_caching=0;
+
+Session altered.
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace on
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> SELECT *
+  2  from sh.sales
+  3  where quantity_sold > 30
+  4  order by prod_id;
+
+no rows selected
+
+
+Execution Plan
+----------------------------------------------------------                                                                                  
+Plan hash value: 899219946                                                                                                                  
+                                                                                                                                            
+-----------------------------------------------------------------------------------------------------------------------                     
+| Id  | Operation                           | Name            | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+|   0 | SELECT STATEMENT                    |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   1 |  SORT ORDER BY                      |                 |     1 |    29 |   294  (13)| 00:00:04 |       |       |                     
+|   2 |   PARTITION RANGE ALL               |                 |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|*  3 |    TABLE ACCESS BY LOCAL INDEX ROWID| SALES           |     1 |    29 |   293  (13)| 00:00:04 |     1 |    28 |                     
+|   4 |     BITMAP CONVERSION TO ROWIDS     |                 |       |       |            |          |       |       |                     
+|   5 |      BITMAP INDEX FULL SCAN         | SALES_PROMO_BIX |       |       |            |          |     1 |    28 |                     
+-----------------------------------------------------------------------------------------------------------------------                     
+                                                                                                                                            
+Predicate Information (identified by operation id):                                                                                         
+---------------------------------------------------                                                                                         
+                                                                                                                                            
+   3 - filter("QUANTITY_SOLD">30)                                                                                                           
+                                                                                                                                            
+Note                                                                                                                                        
+-----                                                                                                                                       
+   - SQL plan baseline "SYS_SQL_PLAN_0f3e54d211df68d0" used for this statement                                                              
+
+
+Statistics
+----------------------------------------------------------                                                                                  
+         90  recursive calls                                                                                                                
+          0  db block gets                                                                                                                  
+       2075  consistent gets                                                                                                                
+          0  physical reads                                                                                                                 
+          0  redo size                                                                                                                      
+        639  bytes sent via SQL*Net to client                                                                                               
+        409  bytes received via SQL*Net from client                                                                                         
+          1  SQL*Net roundtrips to/from client                                                                                              
+         13  sorts (memory)                                                                                                                 
+          0  sorts (disk)                                                                                                                   
+          0  rows processed                                                                                                                 
+
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> set autotrace off
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> --Note that
+SQL> --SQL plan baseline "SYS_SQL_PLAN_0f3e54d211df68d0" used for this statement
+SQL> --The Plan hash value: 899219946
+SQL> --
+SQL> 
+SQL> pause
+
+SQL> 
+SQL> spool off
