@@ -8,10 +8,18 @@
 -- DATE:        2003-05-01
 -------------------------------------------------------------------------------------------
 
+BREAK ON REPORT
+COMPUTE SUM LABEL "TOTAL =========>" OF TotalMB ON REPORT
+COMPUTE SUM LABEL "TOTAL =========>" OF UsedMB ON REPORT
+COMPUTE SUM LABEL "TOTAL =========>" OF FreeMB ON REPORT
+
+col TotalMB for 999,999,999,999
+col UsedMB for 999,999,999,999
+col FreeMB for 999,999,999,999
 col "% Used" for a6
 col "Used" for a22
 
-select t.tablespace_name, t.mb "TotalMB", t.mb - nvl(f.mb,0) "UsedMB", nvl(f.mb,0) "FreeMB"
+select t.tablespace_name,t.mb "TotalMB", t.mb - nvl(f.mb,0) "UsedMB", nvl(f.mb,0) "FreeMB"
        ,lpad(ceil((1-nvl(f.mb,0)/decode(t.mb,0,1,t.mb))*100)||'%', 6) "% Used", t.ext "Ext", 
        '|'||rpad(nvl(lpad('#',ceil((1-nvl(f.mb,0)/decode(t.mb,0,1,t.mb))*20),'#'),' '),20,' ')||'|' "Used"
 from (
