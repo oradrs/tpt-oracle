@@ -44,7 +44,7 @@ from (
   group by tablespace_name
 ) t
 where t.tablespace_name = f.tablespace_name (+)
-AND t.tablespace_name LIKE (CASE WHEN '&&1' IS NULL THEN '%' ELSE upper('%&&1%') END)
+AND t.tablespace_name LIKE (upper('%&&1%'))
 order by t.tablespace_name;
 
 undefine 1
