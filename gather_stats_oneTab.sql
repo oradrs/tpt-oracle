@@ -1,8 +1,14 @@
 -- Purpose : Gather stats for single table
 -- inputs (schema & table name ) will be asked
--- Usage : @gather_stats_oneTab.sql
+-- Usage : @gather_stats_oneTab.sql SCHEMA TABNAME
 -- Verified : in 19c
 -- ------------------------------------------
+
+DEFINE SCHEMA=&1
+DEFINE TABNAME=&2
+
+UNDEFINE 1
+UNDEFINE 2
 
 set serveroutput on size unlimited;
 set timing on;
@@ -24,3 +30,7 @@ Prompt INFO : END - Gather table statistics
 Prompt
 
 set serveroutput off;
+
+UNDEFINE SCHEMA
+UNDEFINE TABNAME
+
