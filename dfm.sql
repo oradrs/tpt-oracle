@@ -6,6 +6,10 @@
 -- PURPOSE:     Show Oracle tablespace free space in Unix df style
 -- AUTHOR:      Tanel Poder [ http://www.tanelpoder.com ]
 -- DATE:        2003-05-01
+-- USAGE : @dfm tablespaceName
+-- Example :
+    -- for all TS :      @dfm %
+    -- for specific TS : @dfm sys
 -------------------------------------------------------------------------------------------
 
 BREAK ON REPORT
@@ -40,5 +44,7 @@ from (
   group by tablespace_name
 ) t
 where t.tablespace_name = f.tablespace_name (+)
+AND t.tablespace_name LIKE (CASE WHEN '&&1' IS NULL THEN '%' ELSE upper('%&&1%') END)
 order by t.tablespace_name;
 
+undefine 1
