@@ -23,12 +23,12 @@ save      &_x_temp_sql replace
 set termout on
 
 -- 12c ADAPTIVE:
-select * from table(dbms_xplan.display_cursor(null,null,'ALLSTATS LAST  +PEEKED_BINDS +PARALLEL +PARTITION +COST +BYTES +ADAPTIVE'))
+-- select * from table(dbms_xplan.display_cursor(null,null,'ALLSTATS LAST  +PEEKED_BINDS +PARALLEL +PARTITION +COST +BYTES +ADAPTIVE'))
 -- 19c HINT_REPORTING:
--- select * from table(dbms_xplan.display_cursor(null,null,'ALLSTATS LAST  +PEEKED_BINDS +PARALLEL +PARTITION +COST +BYTES +HINT_REPORT'))
+select * from table(dbms_xplan.display_cursor(null,null,'ALLSTATS LAST  +PEEKED_BINDS +PARALLEL +PARTITION +COST +BYTES +HINT_REPORT'))
 -- select * from table(dbms_xplan.display_cursor(null,null,'ALLSTATS LAST  +PEEKED_BINDS +PARALLEL +PARTITION +COST +BYTES'))
 where
-    plan_table_output not in ('-----', 'Note')
+    plan_table_output not in ('-----1', 'Note1')
 and plan_table_output not like ('%- Warning: basic plan statistics not available. These are only collected when:%')
 and plan_table_output not like ('%* hint _gather_plan_statistics_ is used for the statement or%')
 and plan_table_output not like ('%* parameter _statistics_level_ is set to _ALL_, at session or system level%');
