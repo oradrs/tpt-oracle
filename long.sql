@@ -17,7 +17,8 @@ select
 	units long_units, 
 	time_remaining, 
 	start_time, 
-	elapsed_seconds 
+	elapsed_seconds,
+    sql_id
 /*, target_desc, last_update_time, username, sql_address, sql_hash_value */ 
 from 
 	v$session_longops
