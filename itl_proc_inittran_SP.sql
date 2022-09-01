@@ -67,17 +67,17 @@ BEGIN
 
         IF (P_CHANGE_INITRANS_VAL > 0 AND P_CHANGE_INITRANS_VAL <= 50) THEN
 
-            l_sql := 'ALTER TABLE /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_tablist.TABLE_NAME || ' INITRANS '|| rec_tablist.INI_TRANS;
+            l_sql := 'ALTER TABLE /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_tablist.TABLE_NAME || ' INITRANS '|| P_CHANGE_INITRANS_VAL;
             DBMS_OUTPUT.PUT_LINE('[ INFO ] DDL = ' || l_sql);
-            -- EXECUTE IMMEDIATE l_sql;
+            EXECUTE IMMEDIATE l_sql;
 
             l_sql := 'ALTER TABLE /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_tablist.TABLE_NAME || ' MOVE PARALLEL';
             DBMS_OUTPUT.PUT_LINE('[ INFO ] DDL = ' || l_sql);
-            -- EXECUTE IMMEDIATE l_sql;
+            EXECUTE IMMEDIATE l_sql;
 
             l_sql := 'ALTER TABLE /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_tablist.TABLE_NAME || ' NOPARALLEL';
             DBMS_OUTPUT.PUT_LINE('[ INFO ] DDL = ' || l_sql);
-            -- EXECUTE IMMEDIATE l_sql;
+            EXECUTE IMMEDIATE l_sql;
 
             DBMS_OUTPUT.PUT_LINE('[ AFTER ] TABLE : ' || rec_tablist.TABLE_NAME || ', INI_TRANS : ' || P_CHANGE_INITRANS_VAL);
 
@@ -88,19 +88,19 @@ BEGIN
             FOR rec_idxlist IN cur_idxlist(rec_tablist.TABLE_NAME)
             LOOP 
 
-                -- DBMS_OUTPUT.PUT_LINE('[ BEFORE ] TABLE : ' || rec_tablist.TABLE_NAME || ', Index : ' || rec_idxlist.INDEX_NAME || ', INI_TRANS : ' || rec_tablist.INI_TRANS);
+                -- DBMS_OUTPUT.PUT_LINE('[ BEFORE ] TABLE : ' || rec_tablist.TABLE_NAME || ', Index : ' || rec_idxlist.INDEX_NAME || ', INI_TRANS : ' || P_CHANGE_INITRANS_VAL);
 
-                -- l_sql := 'ALTER INDEX /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_idxlist.INDEX_NAME || ' INITRANS '|| rec_tablist.INI_TRANS;
+                -- l_sql := 'ALTER INDEX /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_idxlist.INDEX_NAME || ' INITRANS '|| P_CHANGE_INITRANS_VAL;
                 -- DBMS_OUTPUT.PUT_LINE('[ INFO ] DDL = ' || l_sql);
                 -- EXECUTE IMMEDIATE l_sql;
 
                 l_sql := 'ALTER INDEX /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_idxlist.INDEX_NAME || ' REBUILD PARALLEL';
                 DBMS_OUTPUT.PUT_LINE('[ INFO ] DDL = ' || l_sql);
-                -- EXECUTE IMMEDIATE l_sql;
+                EXECUTE IMMEDIATE l_sql;
 
                 l_sql := 'ALTER INDEX /* tab# ' || rec_tablist.rn || ' of ' || rec_tablist.cnt || ' */ ' || rec_idxlist.INDEX_NAME || ' NOPARALLEL';
                 DBMS_OUTPUT.PUT_LINE('[ INFO ] DDL = ' || l_sql);
-                -- EXECUTE IMMEDIATE l_sql;
+                EXECUTE IMMEDIATE l_sql;
 
                 -- DBMS_OUTPUT.PUT_LINE('[ AFTER ] TABLE : ' || rec_tablist.TABLE_NAME || ', Index : ' || rec_idxlist.INDEX_NAME || ', INI_TRANS : ' || P_CHANGE_INITRANS_VAL);
 
@@ -115,6 +115,8 @@ BEGIN
                                                 method_opt          => 'FOR ALL COLUMNS SIZE AUTO',
                                                 degree              => DBMS_STATS.AUTO_DEGREE,
                                                 cascade             => TRUE);
+                DBMS_OUTPUT.PUT_LINE('[ INFO ] Gathered stats for TABLE : ' || rec_tablist.TABLE_NAME);
+
             END IF;
 --        ELSE
 --            DBMS_OUTPUT.PUT_LINE('[ WARNING ] Please verify P_CHANGE_INITRANS_VAL value. It has to be between 1 to 50 only.');
