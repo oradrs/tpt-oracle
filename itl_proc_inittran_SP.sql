@@ -1,5 +1,8 @@
 -- PURPOSE : To change inittran for single / ALL tables, rebuild indexes, gather stats
 --
+-- Note : Requires good amount space in TEMP tablespace 
+-- error ORA-01652: unable to extend temp segment by 8192 in tablespace USERS
+--
 -- SAMPLE :
 --    set serveroutput on size unlimited;
 --
@@ -14,6 +17,19 @@
 
     --* Just Print current inittran for ALL tables
     -- exec proc_inittran(P_SCHEMANAME => 'SCOTT', P_TABLENAME => NULL, P_CHANGE_INITRANS_VAL => -1);
+
+-- OUTPUT :
+-- SQL> exec proc_inittran(P_SCHEMANAME => 'SCOTT', P_TABLENAME => 'EMP', P_CHANGE_INITRANS_VAL => 1, P_GATHER_STATS => 'N' );
+--
+--    [ BEFORE ] TABLE : EMP, INI_TRANS : 1
+--    [ INFO ] DDL = ALTER TABLE /* tab# 1 of 1 */ EMP INITRANS 2
+--    [ INFO ] DDL = ALTER TABLE /* tab# 1 of 1 */ EMP MOVE PARALLEL
+--    [ INFO ] DDL = ALTER TABLE /* tab# 1 of 1 */ EMP NOPARALLEL
+--    [ AFTER ] TABLE : EMP, INI_TRANS : 2
+--
+--    [ INFO ] DDL = ALTER INDEX /* tab# 1 of 1 */ PK_EMP REBUILD PARALLEL
+--    [ INFO ] DDL = ALTER INDEX /* tab# 1 of 1 */ PK_EMP NOPARALLEL
+
 -- ------------------------------------------
 
 CREATE OR REPLACE PROCEDURE proc_inittran (P_SCHEMANAME IN  VARCHAR,
@@ -30,7 +46,7 @@ IS
         WHERE OWNER = UPPER(P_SCHEMANAME)
         AND   TABLE_NAME = NVL(UPPER(P_TABLENAME), TABLE_NAME)
         AND   PARTITIONED = 'NO'
-        AND   ROWNUM < 10
+        -- AND   ROWNUM < 10
         ORDER BY TABLE_NAME;
 
     CURSOR cur_idxlist(v_tab_name VARCHAR) IS
@@ -139,7 +155,5 @@ BEGIN
 END proc_inittran;
 /
 
-show error
-/
-
+show error;
 -- list
