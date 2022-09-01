@@ -46,6 +46,19 @@ IS
     l_sql       VARCHAR2(4000);
 BEGIN
 
+-- +=======================+==================================+=============================================================================================================+
+-- |       Parameter       |             Purpose              |                                                    Value                                                    |
+-- +=======================+==================================+=============================================================================================================+
+-- | P_SCHEMANAME          | schema name                      | valid value                                                                                                 |
+-- +-----------------------+----------------------------------+-------------------------------------------------------------------------------------------------------------+
+-- | P_TABLENAME           | Table Name                       | NULL ( ALL tables ) / valid non-partition table name                                                        |
+-- +-----------------------+----------------------------------+-------------------------------------------------------------------------------------------------------------+
+-- | P_CHANGE_INITTRAN_VAL | new INIT_TRAN value              | DEFAULT -1; max 50. if value is not between 1 to 50 then current value only will be printed                 |
+-- +-----------------------+----------------------------------+-------------------------------------------------------------------------------------------------------------+
+-- | P_GATHER_STATS        | Gather stats for table and index | 'Y'/'N'; DEFAULT 'N'; stats will be gathered only when valid P_CHANGE_INITTRAN_VAL is specified AND its 'Y' |
+-- +-----------------------+----------------------------------+-------------------------------------------------------------------------------------------------------------+
+
+
     -- Verify schema name
     BEGIN
        SELECT count(*)
@@ -118,8 +131,8 @@ BEGIN
                 DBMS_OUTPUT.PUT_LINE('[ INFO ] Gathered stats for TABLE : ' || rec_tablist.TABLE_NAME);
 
             END IF;
---        ELSE
---            DBMS_OUTPUT.PUT_LINE('[ WARNING ] Please verify P_CHANGE_INITRANS_VAL value. It has to be between 1 to 50 only.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('[ WARNING ] Please verify P_CHANGE_INITRANS_VAL value. It has to be between 1 to 50 only.');
         END IF;
     END LOOP tablist;
 
