@@ -45,7 +45,11 @@ SET SERVEROUTPUT ON SIZE UNLIMITED;
 prompt
 prompt *** Take backup of SPfile / init.ora file before making change.
 
+DECLARE
+    v_redo_size_cnt PLS_INTEGER;
+    v_redo_grp_cnt PLS_INTEGER;
 BEGIN
+    <<param>>
    FOR param_rec IN (SELECT name, value, display_value
                        FROM v$parameter
                        WHERE name IN ('compatible', 'optimizer_features_enable', 'statistics_level', 'optimizer_mode',
@@ -119,7 +123,39 @@ BEGIN
       ELSE
           dbms_output.put_line('[ERROR] ' || param_rec.NAME || ' = ' || param_rec.value || '; missing block in code' );
       END IF;
-   END LOOP;
+   END LOOP param;
+
+    dbms_output.put_line(chr(10));
+    dbms_output.put_line('----------------------------------');
+
+-- ------------------------------------------
+
+    <<redo_log>>
+    SELECT count(GROUP#)
+    INTO v_redo_grp_cnt
+    FROM V$LOG;
+
+    IF (v_redo_grp_cnt < 4) THEN
+        dbms_output.put_line('[WARN] ' || 'Should create minimum 10 redo log groups of 1 GB each. Available Redo Log groups = ' || v_redo_grp_cnt );
+    ELSE
+        dbms_output.put_line('[INFO] ' || 'Available Redo Log groups = ' || v_redo_grp_cnt );        
+    END IF;
+
+    SELECT count(distinct bytes)
+    INTO v_redo_size_cnt
+    FROM V$LOG;
+
+    IF (v_redo_size_cnt > 1) THEN
+        dbms_output.put_line('[WARN] ' || 'Create same size for all redo log files. At present, Different size for Redo Log files. ' );
+    ELSE
+        dbms_output.put_line('[INFO] ' || 'Redo Log groups are of same size.');
+    END IF;
+
+    dbms_output.put_line(chr(10));
+    dbms_output.put_line('----------------------------------');
+
+-- ------------------------------------------
+
 END;
 /
 prompt
