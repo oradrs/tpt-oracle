@@ -25,4 +25,5 @@ select BEGIN_INTERVAL_TIME, SNAP_ID, o.owner, o.OBJ#, o.object_name, ITL_WAITS_D
 from qry 
 	join DBA_HIST_SEG_STAT_OBJ o on qry.obj# = o.obj#
 where itl_waits_delta > 0
+ORDER BY BEGIN_INTERVAL_TIME
 /
