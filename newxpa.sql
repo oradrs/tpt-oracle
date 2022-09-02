@@ -3,6 +3,11 @@
 
 SET HEADING OFF LINESIZE 10000 PAGESIZE 0 TRIMSPOOL ON TRIMOUT ON VERIFY OFF LONG 999999 LONGCHU
 
+--set pagesize 0 
+--set linesize 1000 
+--set trimspool on trim on long 2000000 
+set longchunksize 2000000
+
 ACCEPT sqlid FORMAT A13 PROMPT "Enter sql_id: "
 
 SET TERMOUT OFF
