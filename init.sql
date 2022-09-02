@@ -31,7 +31,7 @@ def _start=start   -- Windows
 -- def _delete="rm -f" -- Unix/MacOSX
 def _delete="del" -- Windows
 
-def _tpt_tempdir=&SQLPATH/tmp
+def _tpt_tempdir=&SQLPATH\tmp
 
 -- some internal variables required for TPT scripts
 
