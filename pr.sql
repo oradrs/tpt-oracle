@@ -3,7 +3,7 @@
 --          For coding simplicity (read: lazyness) I'm using custom quotation marks ( q'\ ) so 
 --          this script works only from Oracle 10gR2 onwards
 
-def _pr_tmpfile=&_tpt_tempdir/pr_&_tpt_tempfile..tmp
+def _pr_tmpfile=&_tpt_tempdir\pr_&_tpt_tempfile..tmp
 
 @@saveset
 set serverout on size 1000000 termout off
