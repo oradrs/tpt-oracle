@@ -10,6 +10,7 @@ column	tab_blocks heading BLOCKS		format 999999999999
 column	tab_empty_blocks heading EMPTY		format 99999999
 column	tab_avg_space	heading AVGSPC		format 99999
 column	tab_avg_row_len	heading ROWLEN		format 99999
+column	ts_name	heading TS_NAME		format a15
 
 prompt Show tables matching condition "&1" (if schema is not specified then current user's tables only are shown)...
 
@@ -38,6 +39,7 @@ select
     degree,
     compression
 --  , compress_for  -- 11.2
+    , tablespace_name ts_name
 from
 	dba_tables
 where
