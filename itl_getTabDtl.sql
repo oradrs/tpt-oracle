@@ -3,16 +3,28 @@
 -- 29-Sep-2021 
 -- ------------------------------------------
 
+DEF schemaName = '&1';
+UNDEF 1;
+DEF tabname = '&2';
+UNDEF 2;
+
 col table_name format a30;
 col index_name format a30;
 
 select table_name, INI_TRANS 
-from user_tables 
-where table_name= upper('&tabName');
+from all_tables 
+where 
+owner = upper('&&schemaName')
+AND table_name= upper('&&tabName');
 
 PROMPT
 
 select table_name, index_name, INI_TRANS
-from user_indexes
-where table_name = upper('&tabname')
-ORDER BY index_name;
+from all_indexes
+where 
+owner = upper('&&schemaName')
+AND table_name= upper('&&tabName');
+
+
+undefine schemaName;
+undefine tabname;
