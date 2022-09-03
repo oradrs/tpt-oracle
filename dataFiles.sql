@@ -1,3 +1,13 @@
+-- USAGE : @dataFiles.sql tablespaceName
+-- Example :
+    -- for all TS :      @dataFiles.sql %
+    -- for specific TS : @dataFiles.sql sys
+
+PRO
+PRO Usage :
+PRO -- for all TS :      @dataFiles.sql %
+PRO -- for specific TS : @dataFiles.sql sys
+PRO
 
 show parameter db_block_size;
 

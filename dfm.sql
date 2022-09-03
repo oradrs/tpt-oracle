@@ -23,6 +23,12 @@ col FreeMB for 999,999,999,999
 col "% Used" for a6
 col "Used" for a22
 
+PRO
+PRO Usage :
+PRO -- for all TS :      @dfm %
+PRO -- for specific TS : @dfm sys
+PRO
+
 select t.tablespace_name,t.mb "TotalMB", t.mb - nvl(f.mb,0) "UsedMB", nvl(f.mb,0) "FreeMB"
        ,lpad(ceil((1-nvl(f.mb,0)/decode(t.mb,0,1,t.mb))*100)||'%', 6) "% Used", t.ext "Ext", 
        '|'||rpad(nvl(lpad('#',ceil((1-nvl(f.mb,0)/decode(t.mb,0,1,t.mb))*20),'#'),' '),20,' ')||'|' "Used"
