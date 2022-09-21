@@ -31,3 +31,14 @@ from
 v$log_history
 GROUP by to_char(first_time,'YYYY-MON-DD')
 ORDER BY to_Date(day, 'YYYY-MON-DD') desc;
+
+PRO
+PRO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-- today's logswitch history
+PRO today's logswitch history
+
+select rownum, FIRST_TIME, lag (FIRST_TIME) over(order by FIRST_TIME) prev, round( (FIRST_TIME - lag (FIRST_TIME) over(order by FIRST_TIME))  * 24 * 60 ) diff_minutes
+from v$log_history 
+where trunc(FIRST_TIME) = trunc(sysdate)
+order by FIRST_TIME
+/
