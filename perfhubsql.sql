@@ -19,4 +19,7 @@ spool off;
 -- is_realtime 1 and active report
 -- for more options see the documentation on DBMS_PERF
 
+PRO dbms_perf_report_sql_&&sql_id._&&current_time..html has been generated.
+
 undef sql_id
+
