@@ -23,9 +23,8 @@ def SQLPATH=""
 -- def SQLPATH=$SQLPATH -- (Unix/Mac OSX)
 def SQLPATH=%SQLPATH% -- (Windows)
 
-
 def _start=start   -- Windows
--- def _start=firefox -- Unix/Linux
+-- def _start=xdg-open -- Unix/Linux
 -- def _start=open -- MacOS
 
 -- def _delete="rm -f" -- Unix/MacOSX
