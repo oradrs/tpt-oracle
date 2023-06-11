@@ -200,3 +200,4 @@ set editfile afiedit.sql
 
   set termout on
 
+set null '(null)';

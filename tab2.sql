@@ -48,7 +48,7 @@ where
 					WHEN INSTR('&1','.') > 0 THEN 
 					    SUBSTR('&1',INSTR('&1','.')+1)
 					ELSE
-					    '&1'
+					    replace('&1', 'VLS_', 'TLS_')
 					END
 				     ) ESCAPE '\'
 AND	owner LIKE

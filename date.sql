@@ -5,7 +5,8 @@ select
     TO_CHAR(sysdate, 'yyyy-mm-dd hh24:mi:ss') as "SYSDATE",
     (to_date(sysdate) - to_date('01011970','ddmmyyyy')) * 24*60*60 SECONDS_EPOCH,
     to_char((to_date(sysdate) - to_date('01011970','ddmmyyyy')) * 24*60*60, 'XXXXXXXX') SEC_HEX,
-    q'[TIMESTAMP']'||TO_CHAR(sysdate, 'yyyy-mm-dd hh24:mi:ss')||'''' as "SYSDATE_ANSI_TIMESTAMP_SYNTAX"
+    q'[TIMESTAMP']'||TO_CHAR(sysdate, 'yyyy-mm-dd hh24:mi:ss')||'''' as "SYSDATE_ANSI_TIMESTAMP_SYNTAX",
+	to_char(SYS_EXTRACT_UTC(SYSTIMESTAMP) + (5.5/24), 'DD-MON-YY HH:MI:SS PM') IST_DTTM
 from 
     dual
 /
