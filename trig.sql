@@ -10,8 +10,8 @@ COL table_name     FOR A30
 COL trigger_owner  FOR A20
 COL trigger_name   FOR A30
 
-select rownum, table_owner, table_name, owner trigger_owner, trigger_name, trigger_type, triggering_event trig_triggering_event	--, trigger_body
-from dba_triggers 
+select rownum, table_owner, table_name, owner trigger_owner, trigger_name, trigger_type, triggering_event trig_triggering_event, status	--, trigger_body
+from dba_triggers
 where (
     UPPER(table_name) LIKE
                 UPPER(CASE

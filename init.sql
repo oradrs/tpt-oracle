@@ -8,7 +8,7 @@
 --
 -- Author:      Tanel Poder
 -- Copyright:   (c) http://www.tanelpoder.com
--- 
+--
 -- Other:       You need to comment out the right variable definitions for your client platform below.
 --              Assumes SQLPATH variable set to point to TPT script directory.
 --
@@ -53,7 +53,7 @@ def _tpt_tempdir=&SQLPATH\tmp
   define      day="sysdate-1 sysdate"
   define    today="TRUNC(sysdate) sysdate"
 
--- you should change linesize to match terminal width - 1 only 
+-- you should change linesize to match terminal width - 1 only
 -- if you don't have a terminal with horizontal scrolling
 -- capability (cmd.exe and Terminator terminal do have horizontal scrolling)
 
@@ -76,7 +76,7 @@ def _tpt_tempdir=&SQLPATH\tmp
 -- larger arraysize for faster fetching of data
 -- note that arraysize can affect outcome of experiments
 -- like buffer gets for select statements etc.
--- 
+--
 -- setting from 500 to 100 as otherwise snapper/dbms_output starts getting ORA-6502 errors due to 32k fetch limit of dbms_output
 
   set arraysize 100
@@ -111,12 +111,12 @@ def _tpt_tempdir=&SQLPATH\tmp
   set describe depth 1 linenum on indent on
 
 -- you can make sqlplus run any command as your editor
--- I could use "start notepad" on windows if you want to 
+-- I could use "start notepad" on windows if you want to
 -- return control back to sqlplus immediately after launching
 -- notepad (so that you can continue typing in sqlplus
 
---  define _editor="vi -c 'set notitle'"  
---  define _external_editor="/Applications/Terminator.app/Contents/MacOS/Terminator vi "  
+--  define _editor="vi -c 'set notitle'"
+--  define _external_editor="/Applications/Terminator.app/Contents/MacOS/Terminator vi "
 
 -- assign the tracefile name to trc variable
 
@@ -138,7 +138,7 @@ def _tpt_tempdir=&SQLPATH\tmp
          ) || '.trc' tracefile
   from v$parameter where name = 'user_dump_dest';
 
-  column tracefile print 
+  column tracefile print
 
 -- make default date format nicer
 
@@ -181,8 +181,8 @@ DEF _tpt_tempfile=sqlplus_tmpfile
 col seminar_logfile new_value seminar_logfile
 col tpt_tempfile new_value _tpt_tempfile
 
-select 
-    to_char(sysdate, 'YYYYMMDD-HH24MISS') seminar_logfile 
+select
+    to_char(sysdate, 'YYYYMMDD-HH24MISS') seminar_logfile
   , instance_name||'-'||to_char(sysdate, 'YYYYMMDD-HH24MISS') tpt_tempfile
 from v$instance;
 
@@ -201,3 +201,4 @@ set editfile afiedit.sql
   set termout on
 
 set null '(null)';
+SET sqlbl on;

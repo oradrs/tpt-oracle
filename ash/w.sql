@@ -7,5 +7,5 @@ PROMPT What's going on? Showing top timed events of last minute from ASH...
 @ashtop event2 &filter sysdate-1/24/60 sysdate
 
 PROMPT Showing top SQL and wait classes of last minute from ASH...
-@ashtop INST_ID,sql_id,session_state,wait_class &filter sysdate-1/24/60 sysdate
+@ashtop INST_ID,sql_id,session_id,session_state,BLOCKING_SESSION,wait_class &filter sysdate-1/24/60 sysdate
 

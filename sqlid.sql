@@ -12,14 +12,15 @@ col pios_per_exec  FOR 9999999999
 
 prompt Show SQL text, child cursors and execution stats for SQLID &1 child &2
 
-select 
+select
+	inst_id,
 	hash_value,
 	plan_hash_value,
 	child_number	sql_child_number,
 	sql_text sql_sql_text
-from 
-	v$sql 
-where 
+from
+	gv$sql
+where
 	sql_id = ('&1')
 and child_number like '&2'
 order by
@@ -28,7 +29,8 @@ order by
 	child_number
 /
 
-select 
+select
+	inst_id,
 	child_number	sql_child_number,
 	plan_hash_value plan_hash,
 	parse_calls parses,
@@ -51,21 +53,21 @@ select
 --	sharable_mem,
 --	persistent_mem,
 --	runtime_mem,
---   , PHYSICAL_READ_REQUESTS         
---   , PHYSICAL_READ_BYTES            
---   , PHYSICAL_WRITE_REQUESTS        
---   , PHYSICAL_WRITE_BYTES           
---   , IO_CELL_OFFLOAD_ELIGIBLE_BYTES 
---   , IO_INTERCONNECT_BYTES          
---   , IO_CELL_UNCOMPRESSED_BYTES     
---   , IO_CELL_OFFLOAD_RETURNED_BYTES 
+--   , PHYSICAL_READ_REQUESTS
+--   , PHYSICAL_READ_BYTES
+--   , PHYSICAL_WRITE_REQUESTS
+--   , PHYSICAL_WRITE_BYTES
+--   , IO_CELL_OFFLOAD_ELIGIBLE_BYTES
+--   , IO_INTERCONNECT_BYTES
+--   , IO_CELL_UNCOMPRESSED_BYTES
+--   , IO_CELL_OFFLOAD_RETURNED_BYTES
   ,	users_executing
   , last_active_time
 	, address		parent_handle
 	, child_address   object_handle
-from 
-	v$sql
-where 
+from
+	gv$sql
+where
 	sql_id = ('&1')
 and child_number like '&2'
 order by

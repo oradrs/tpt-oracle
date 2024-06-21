@@ -5,7 +5,7 @@
 set serveroutput on size unlimited;
 set timing on;
 
-Prompt 
+Prompt
 Prompt INFO : START - Gather table statistics
 
 DECLARE
@@ -31,26 +31,31 @@ BEGIN
         v_sample_size_pct := '100';
     $END
 
- 	for st_row in (select owner, table_name 
-                    from all_tables 
+ 	for st_row in (select owner, table_name
+                    from all_tables
                     where OWNER IN (UPPER('&SCHEMA_NAME'))
                     AND NOT REGEXP_LIKE (table_name, '^BIN\$.*')
                     ORDER by owner, table_name)
 	loop
-		v_stats := 'begin 
-				dbms_stats.gather_table_stats(ownname=>'||''''||st_row.owner||''''||','||
-				'tabname=>'||''''||st_row.table_name||''''||','||
-				'estimate_percent=>'|| v_sample_size_pct ||','||
-				'method_opt=>'||''''||'FOR ALL COLUMNS SIZE AUTO'||''''||','||
-				'degree=>'|| v_degree ||','||
-				'cascade=>true);
-			    end;'; 
-		-- dbms_output.put_line('ownname=>'||''''||st_row.owner||''''||','||'tabname=>'||''''||st_row.table_name);
-        -- dbms_output.put_line(v_stats);
-		execute immediate v_stats; 
-	end loop; 
+		begin
+			v_stats := 'begin
+					dbms_stats.gather_table_stats(ownname=>'||''''||st_row.owner||''''||','||
+					'tabname=>'||''''||st_row.table_name||''''||','||
+					'estimate_percent=>'|| v_sample_size_pct ||','||
+					'method_opt=>'||''''||'FOR ALL COLUMNS SIZE AUTO'||''''||','||
+					'degree=>'|| v_degree ||','||
+					'cascade=>true);
+					end;';
+			-- dbms_output.put_line('ownname=>'||''''||st_row.owner||''''||','||'tabname=>'||''''||st_row.table_name);
+			-- dbms_output.put_line(v_stats);
+			execute immediate v_stats;
+		EXCEPTION
+		   WHEN OTHERS THEN
+				dbms_output.put_line('Failed for : ownname=>'||''''||st_row.owner||''''||','||'tabname=>'||''''||st_row.table_name);
+		END;
+	end loop;
 
-end; 
+end;
 /
 
 Prompt INFO : END - Gather table statistics

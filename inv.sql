@@ -4,7 +4,7 @@
 prompt Show invalid objects, indexes, index partitions and index subpartitions....
 
 col ind_owner head OWNER for a20
-col inv_oname head OBJECT_NAME for a30
+col inv_oname head OBJECT_NAME for a50
 
 select owner ind_owner, object_name inv_oname, object_type from dba_objects where status != 'VALID';
 

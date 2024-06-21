@@ -7,24 +7,24 @@ col long_units  head UNITS  for a10
 
 prompt Show session long operations from v$session_longops for sid &1
 
-select 
-	sid, 
-	serial#, 
-	opname long_opname, 
-	target long_target, 
-	sofar, 
-	totalwork, 
-	units long_units, 
-	time_remaining, 
+select
+	sid,
+	serial#,
+	opname long_opname,
+	target long_target,
+	sofar,
+	totalwork,
+	units long_units,
+	time_remaining,
     ROUND(SOFAR/TOTALWORK*100,2) "%_COMPLETE",
-	start_time, 
+	start_time,
 	elapsed_seconds,
     sql_id
-/*, target_desc, last_update_time, username, sql_address, sql_hash_value */ 
-from 
-	v$session_longops
+/*, target_desc, last_update_time, username, sql_address, sql_hash_value */
+from
+	gv$session_longops
 where
-	sid in (select sid from v$session where &1)
+	sid in (select sid from gv$session where &1)
 and sofar != totalwork
 /
 
