@@ -8,7 +8,7 @@
 --
 -- Author:      Tanel Poder
 -- Copyright:   (c) http://www.tanelpoder.com
---              
+--
 -- Usage:       @ddl [schema.]<object_name_pattern>
 -- 	        @ddl mytable
 --	        @ddl system.table
@@ -24,14 +24,14 @@ EXEC DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'SEGMEN
 EXEC DBMS_METADATA.set_transform_param (DBMS_METADATA.session_transform, 'STORAGE', false);
 
 select
-	dbms_metadata.get_ddl( object_type, object_name, owner ) 
-from 
-	all_objects 
-where 
+	dbms_metadata.get_ddl( object_type, object_name, owner )
+from
+	all_objects
+where
     object_type NOT LIKE '%PARTITION' AND object_type NOT LIKE '%BODY'
-AND	upper(object_name) LIKE 
-				upper(CASE 
-					WHEN INSTR('&1','.') > 0 THEN 
+AND	upper(object_name) LIKE
+				upper(CASE
+					WHEN INSTR('&1','.') > 0 THEN
 					    SUBSTR('&1',INSTR('&1','.')+1)
 					ELSE
 					    '&1'
@@ -48,10 +48,10 @@ AND	owner LIKE
 Prompt *** Index ***
 SELECT DBMS_METADATA.get_ddl ('INDEX', index_name, owner)
 FROM   all_indexes
-where 
-	upper(table_name) LIKE 
-				upper(CASE 
-					WHEN INSTR('&1','.') > 0 THEN 
+where
+	upper(table_name) LIKE
+				upper(CASE
+					WHEN INSTR('&1','.') > 0 THEN
 					    SUBSTR('&1',INSTR('&1','.')+1)
 					ELSE
 					    '&1'
@@ -63,9 +63,6 @@ AND	owner LIKE
 		ELSE
 			user
 		END
-
--- WHERE  owner      = UPPER('&OWNER')
--- AND    table_name = DECODE(UPPER('&TABNAME'), 'ALL', table_name, UPPER('&&TABNAME'));
 
 /
 
